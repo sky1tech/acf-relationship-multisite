@@ -98,7 +98,7 @@ Array
 
 To get the post on the frontend you need to do a foreach loop.
 
-###### With Post ID
+**With Post ID**
 
 ```php
 	    // get field value
@@ -121,7 +121,7 @@ To get the post on the frontend you need to do a foreach loop.
 	    <?php endif; ?>
 ```
 
-###### With Post Object
+**With Post Object**
 
 ```php
         // get field value
