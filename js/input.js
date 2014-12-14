@@ -410,6 +410,7 @@
 					// fetch
 					self.doFocus($field);
 					self.fetch();
+					$(this).children('p').remove();
 				}
 				
 			});
@@ -474,11 +475,9 @@ var scroll_timer = null;
 				post_id:	acf.get('post_id'),
 			});
 			
-			
 			// merge in wrap data
 			// don't use this.settings becuase they are outdated
-			$.extend(data, acf.get_data( this.$el ));
-			
+			$.extend(data, this.get_data( this.$el ));
 			
 			// clear html if is new query
 			if( data.paged == 1 ) {
@@ -512,7 +511,9 @@ var scroll_timer = null;
 					
 					// render
 					self.doFocus($field);
-					self.render(json);
+					if( json.length > 0 ) {
+						self.render(json);
+					}
 					
 				}
 				
@@ -614,6 +615,69 @@ var scroll_timer = null;
 			});
 			
 			
+		},
+
+		get_data : function( $el, name ){
+			
+			//console.log('get_data(%o, %o)', name, $el);
+			// defaults
+			name = name || false;
+			
+			
+			// vars
+			var self = this,
+				data = false;
+			
+			
+			// specific data-name
+			if( name ) {
+			
+				data = $el.attr('data-' + name)
+				
+				// convert ints (don't worry about floats. I doubt these would ever appear in data atts...)
+				if( $.isNumeric(data) ) {
+					
+					if( data.match(/[^0-9]/) ) {
+						
+						// leave value if it contains such characters: . + - e
+						
+					} else {
+						
+						data = parseInt(data);
+						
+					}
+					
+				}
+				
+			} else {
+				
+				// all data-names
+				data = {};
+				
+				$.each( $el[0].attributes, function( i, attr ) {
+					
+					// bail early if not data-
+					if( attr.name.substr(0, 5) !== 'data-' ) {
+					
+						return;
+						
+					}
+					
+					
+					// vars
+					name = attr.name.replace('data-', '');
+					
+					
+					// add to atts
+					data[ name ] = self.get_data( $el, name );
+					
+				});
+			}
+			
+			
+			// return
+			return data;
+				
 		},
 		
 		walker: function( data ){
